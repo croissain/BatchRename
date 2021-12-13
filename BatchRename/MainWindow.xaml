@@ -1,0 +1,296 @@
+﻿<Window x:Class="BatchRename.MainWindow"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BatchRename"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="Batch Renamer"
+        Height="450"
+        Width="1000"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="85" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical"
+                    Grid.Row="0"
+                    Margin="0 0 0 0 ">
+            <ToolBarTray>
+                <ToolBar>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Height="20"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Name="RefreshButton"
+                                Click="RefreshButton_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="15"
+                                        Width="76">
+                                <materialDesign:PackIcon Kind="RefreshCircle"
+                                                         Height="15" />
+                                <TextBlock Text=" Refresh"
+                                           FontSize="12"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Width="150"
+                                Height="20"
+                                Margin="8,0,10,0"
+                                Background="#FFA886C2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Name="StartBacthBtn"
+                                Click="StartBacthBtn_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="15"
+                                        Width="100">
+                                <materialDesign:PackIcon Kind="Play"
+                                                         Height="15" />
+                                <TextBlock Text="START BATCH"
+                                           FontSize="12"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Width="150"
+                                Height="20"
+                                Margin="8,0,10,0"
+                                Background="#FFA886C2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Name="PreviewBtn"
+                                Click="PreviewBtn_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="15"
+                                        Width="100">
+                                <materialDesign:PackIcon Kind="Play"
+                                                         Height="15" />
+                                <TextBlock Text="Preview"
+                                           FontSize="12"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ToolBar>
+            </ToolBarTray>
+            <ToolBarTray>
+                <ToolBar x:Name="MethodBar" Height="30">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Method: " HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
+                        <ComboBox Style="{StaticResource MaterialDesignFilledComboBox}"
+                                  Name="ActionMethodBox"
+                                  SelectedIndex="0"
+                                  Width="200">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding MagicWord}" Foreground="White"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Margin="10,0,10,0"
+                                Height="25px"
+                                Name="AddMethodButton"
+                                Click="AddMethodButton_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="25"
+                                        Width="100">
+                                <materialDesign:PackIcon Kind="FilePlus"
+                                                         VerticalAlignment="Center"
+                                                         Height="20"/>
+                                <TextBlock Text="Add method"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="12">
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Margin="0,0,10,0"
+                                Height="25px"
+                                Name="DeleteButotn"
+                                Click="DeleteButton_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="25">
+                                <materialDesign:PackIcon Kind="Delete"
+                                                         VerticalAlignment="Center" />
+                                <TextBlock Text="Clear"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center">
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ToolBar>
+            </ToolBarTray>
+            <ToolBarTray>
+                <ToolBar Name="PresetBar">
+                    <StackPanel Orientation="Horizontal"
+                                Height="25">
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}" 
+                                Name="LoadPreset" Click="LoadPreset_Click" Margin="0 0 5 0">
+                            <materialDesign:PackIcon Kind="FileDocument" Foreground="#FF63CCBE"/>
+                        </Button>
+
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Name="SavePreset" Click="SavePreset_Click" Margin="0 0 5 0">
+                            <materialDesign:PackIcon Kind="ContentSave" Foreground="#FF63CCBE"/>
+                        </Button>
+                        <Label Content="Presets: "
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"></Label>
+                        <ComboBox Style="{StaticResource MaterialDesignFilledComboBox}"
+                                  Name="presetBox"
+                                  Width="147" SelectionChanged="presetBox_SelectionChanged">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </ToolBar>
+            </ToolBarTray>
+        </StackPanel>
+        <Grid Grid.Row="1"
+              Margin="0 0 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <!--Phần chứa các method được gọi-->
+            <ListBox x:Name="ActionListBox" Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Edit" Click="EditMenuItem_Click"/>
+                                    <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
+                            <!--Giao diện method được chọn-->
+                            <Button Content="{Binding MagicWord}" Width="295" BorderThickness="2" Foreground="Red" FontWeight="Bold" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TabControl Grid.Column="1">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Files"></TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <Grid>
+                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                ToolTip="MaterialDesignFloatingLightButton"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Margin="20"
+                                Click="AddFileButtons_Click" Panel.ZIndex="10">
+                            <materialDesign:PackIcon Kind="Plus"
+                                                     Height="24"
+                                                     Width="24" />
+                        </Button>
+                        <StackPanel>
+                            <DataGrid Name="FileTab"
+                                      Background="#FFC03E3E"
+                                      GridLinesVisibility="All"
+                                      IsReadOnly="True" Foreground="#DD8BB6F6">
+                                <DataGrid.BorderBrush>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="Black"/>
+                                        <GradientStop Color="White" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </DataGrid.BorderBrush>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="File Name"
+                                                        Width="150"
+                                                        Binding="{Binding Filename}"/>
+                                    <DataGridTextColumn Header="New File Name"
+                                                        Width="150"
+                                                        Binding="{Binding Newfilename}" />
+                                    <DataGridTextColumn Header="Path"
+                                                        Width="150"
+                                                        Binding="{Binding Path}" />
+                                    <DataGridTextColumn Header="Status"
+                                                        Width="*"
+                                                        Binding="{Binding Status}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Folders"></TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <Grid>
+                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                ToolTip="MaterialDesignFloatingLightButton"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Margin="20"
+                                Click="AddFolderButtons_Click">
+                            <materialDesign:PackIcon Kind="Plus"
+                                                     Height="24"
+                                                     Width="24" />
+                        </Button>
+                        <StackPanel>
+                            <DataGrid Name="FolderTab"
+                                      Background="#FFB34444"
+                                      GridLinesVisibility="All"
+                                      IsReadOnly="True" BorderBrush="#1FDA8484" Foreground="#DD46973A">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Folder Name"
+                                                        Width="150"
+                                                        Binding="{Binding Foldername}" />
+                                    <DataGridTextColumn Header="New Folder Name"
+                                                        Width="150"
+                                                        Binding="{Binding Newfolder}" />
+                                    <DataGridTextColumn Header="Path"
+                                                        Width="150"
+                                                        Binding="{Binding Path}" />
+                                    <DataGridTextColumn Header="Status"
+                                                        Width="*"
+                                                        Binding="{Binding Status}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+    </Grid>
+</Window>
