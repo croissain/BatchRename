@@ -173,6 +173,26 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Margin="10,0,10,0"
+                                Height="25px"
+                                Name="AddFileFromFolder"
+                                Click="AddFileFromFolder_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="25"
+                                        Width="140">
+                                <materialDesign:PackIcon Kind="FilePlus"
+                                                         VerticalAlignment="Center"
+                                                         Height="20"/>
+                                <TextBlock Text="Add File From Folder"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="12">
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </ToolBar>
             </ToolBarTray>
@@ -209,21 +229,27 @@
                     </TabItem.Header>
 
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*"/>
+                            <ColumnDefinition Width="340*"/>
+                        </Grid.ColumnDefinitions>
                         <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
                                 ToolTip="MaterialDesignFloatingLightButton"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Margin="20"
-                                Click="AddFileButtons_Click" Panel.ZIndex="10">
+                                Margin="0,0,20,20"
+                                Click="AddFileButtons_Click" Panel.ZIndex="10" Grid.Column="1">
                             <materialDesign:PackIcon Kind="Plus"
                                                      Height="24"
                                                      Width="24" />
                         </Button>
-                        <StackPanel>
+                        <StackPanel Grid.ColumnSpan="2" Name="FileTabStack"
+                                    AllowDrop="True" Drop="FileTabStack_Drop">
                             <DataGrid Name="FileTab"
+                                      IsReadOnly="True"
                                       Background="#FFC03E3E"
                                       GridLinesVisibility="All"
-                                      IsReadOnly="True" Foreground="#DD8BB6F6">
+                                      Foreground="#DD8BB6F6">
                                 <DataGrid.BorderBrush>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="Black"/>
@@ -255,39 +281,39 @@
                         </StackPanel>
                     </TabItem.Header>
 
-                    <Grid>
-                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                        <Grid>
+                            <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
                                 ToolTip="MaterialDesignFloatingLightButton"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Margin="20"
                                 Click="AddFolderButtons_Click">
-                            <materialDesign:PackIcon Kind="Plus"
+                                <materialDesign:PackIcon Kind="Plus"
                                                      Height="24"
                                                      Width="24" />
-                        </Button>
-                        <StackPanel>
-                            <DataGrid Name="FolderTab"
+                            </Button>
+                            <StackPanel Name="FoldertabStack" AllowDrop="True" Drop="FoldertabStack_Drop">
+                                <DataGrid Name="FolderTab"
                                       Background="#FFB34444"
                                       GridLinesVisibility="All"
                                       IsReadOnly="True" BorderBrush="#1FDA8484" Foreground="#DD46973A">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Folder Name"
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Folder Name"
                                                         Width="150"
                                                         Binding="{Binding Foldername}" />
-                                    <DataGridTextColumn Header="New Folder Name"
+                                        <DataGridTextColumn Header="New Folder Name"
                                                         Width="150"
                                                         Binding="{Binding Newfolder}" />
-                                    <DataGridTextColumn Header="Path"
+                                        <DataGridTextColumn Header="Path"
                                                         Width="150"
                                                         Binding="{Binding Path}" />
-                                    <DataGridTextColumn Header="Status"
+                                        <DataGridTextColumn Header="Status"
                                                         Width="*"
                                                         Binding="{Binding Status}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
-                    </Grid>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Grid>
                 </TabItem>
             </TabControl>
         </Grid>

@@ -30,6 +30,7 @@ namespace BatchRename
         BindingList<IRenameRuleParser> parsers = new BindingList<IRenameRuleParser>(); //Các parser sẽ tiến hành parse các string thành các quy tắc đổi tên
         Dictionary<string, IRenameRuleParser> parserPrototypes = new Dictionary<string, IRenameRuleParser>();
         List<string> listPreset = new List<string>();
+        private bool _isBatched = false;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -66,7 +67,6 @@ namespace BatchRename
             presetBox.ItemsSource = listPreset;
         }
 
-
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             FileTab.Items.Refresh();
@@ -90,6 +90,7 @@ namespace BatchRename
             FileTab.Items.Clear();
             FolderTab.ItemsSource = null;
             FolderTab.Items.Clear();
+            _isBatched = false;
         }
 
         private void AddFileButtons_Click(object sender, RoutedEventArgs e)
@@ -109,6 +110,27 @@ namespace BatchRename
             }
         }
 
+        private void AddFileFromFolder_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog screen = new System.Windows.Forms.FolderBrowserDialog();
+            if (screen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                // get all filenames in path
+                string path = screen.SelectedPath + "\\";
+                string[] files = Directory.GetFiles(path);
+
+                // add all to filenameList
+                foreach (var file in files)
+                {
+                    FileTab.Items.Add(new File()
+                    {
+                        Filename = System.IO.Path.GetFileName(file),
+                        Path = file
+                    });
+                }
+            }
+        }
+
         private void AddFolderButtons_Click(object sender, RoutedEventArgs e)
         {
             string directory;
@@ -116,16 +138,13 @@ namespace BatchRename
             if (screen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 directory = screen.SelectedPath;
-                string[] subDirectory = Directory.GetDirectories(directory);
 
-                foreach (var dir in subDirectory)
+                FolderTab.Items.Add(new Folder()
                 {
-                    FolderTab.Items.Add(new Folder()
-                    {
-                        Foldername = dir.Substring(directory.Length + 1),
-                        Path = dir
-                    });
-                }
+                    Foldername = System.IO.Path.GetFileName(directory),
+                    Path = directory
+                });
+
             }
         }
 
@@ -197,7 +216,7 @@ namespace BatchRename
 
         private void StartBacthBtn_Click(object sender, RoutedEventArgs e)
         {
-            bool isDuplicate = false;
+            bool isFailed = false;
             //check input from users;
             if (ActionListBox.Items.Count == 0)
             {
@@ -206,6 +225,10 @@ namespace BatchRename
             else if (FileTab.Items.Count == 0 && FolderTab.Items.Count == 0)
             {
                 System.Windows.Forms.MessageBox.Show("You haven't added Choose File Or Folder yet!", "Erro Detected in Input", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+            }
+            else if (_isBatched)
+            {
+                System.Windows.Forms.MessageBox.Show("Duplicate Error!\n You must clear all file or folder to rebatch.", "Duplicate Handle", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
             }
             else
             {
@@ -228,11 +251,11 @@ namespace BatchRename
                         file.Newfilename = result;
                         file.Status = "Ok";
                     }
-                    catch (Exception k)
+                    catch (Exception ex)
                     {
-                        isDuplicate = true;
+                        isFailed = true;
                         file.Newfilename = result;
-                        file.Status = "Duplicate";
+                        file.Status = ex.GetType().Name;
                         FileList.Add(file);
                     }
                 }
@@ -247,8 +270,9 @@ namespace BatchRename
                     }
 
                     string newfolderpath = Path.GetDirectoryName(folder.Path) + "\\" + result;
-                    string tempFolderName = "\\Temp";
+                    string tempFolderName = "\\TempFolderBatchRename";
                     string tempFolderPath = Path.GetDirectoryName(folder.Path) + tempFolderName;
+
                     CopyAll(folder.Path, tempFolderPath, true);
 
                     if (folder.Path.Equals(newfolderpath) == false)
@@ -261,15 +285,15 @@ namespace BatchRename
                             folder.Newfolder = result;
                             folder.Status = "OK";
                         }
-                        catch (Exception exception) //exception when folder name is duplicate
+                        catch (Exception ex)
                         {
-                            isDuplicate = true;
+                            isFailed = true;
                             string duplicatestore = Path.GetDirectoryName(folder.Path) + "\\Store" + $"{++count}";
                             CopyAll(tempFolderPath, duplicatestore, true);
                             RemoveDirectory(tempFolderPath);
                             Directory.Delete(tempFolderPath);
                             folder.Newfolder = result;
-                            folder.Status = "Duplicate Foldername";
+                            folder.Status = ex.GetType().Name;
                             FolderList.Add(folder);
                         }
                     }
@@ -280,13 +304,10 @@ namespace BatchRename
                     }
                 }
 
-                if (isDuplicate == true)
-                {
-                    System.Windows.Forms.MessageBox.Show("Duplicate! Please check again", "Erro Detected in Input", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                }
-                else
+                if (isFailed == false)
                 {
                     System.Windows.MessageBox.Show("Rename Success! Check your file or folder again!");
+                    _isBatched = true;
                 }
 
                 FolderTab.Items.Refresh();
@@ -296,7 +317,6 @@ namespace BatchRename
 
         private void PreviewBtn_Click(object sender, RoutedEventArgs e)
         {
-            bool isDuplicate = false;
             if (ActionListBox.Items.Count == 0)
             {
                 System.Windows.Forms.MessageBox.Show("You haven't added any methods yet!", "Erro Detected in Input", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
@@ -304,6 +324,10 @@ namespace BatchRename
             else if (FileTab.Items.Count == 0 && FolderTab.Items.Count == 0)
             {
                 System.Windows.Forms.MessageBox.Show("You haven't added Choose File Or Folder yet!", "Erro Detected in Input", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+            }
+            else if (_isBatched)
+            {
+                System.Windows.Forms.MessageBox.Show("Duplicate Error!\n You must clear all file or folder to rebatch.", "Duplicate Handle", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
             }
             else
             {
@@ -313,28 +337,24 @@ namespace BatchRename
                 foreach (File file in FileTab.Items)
                 {
                     var tempFile = file;
-
                     string result = tempFile.Filename;
                     foreach (var rule in actions)
                     {
                         result = rule.Rename(result);
                     }
-
                     try
                     {
                         tempFile.Newfilename = result;
                         tempFile.Status = "Ok";
                     }
-                    catch (Exception k)
+                    catch (Exception ex)
                     {
-                        isDuplicate = true;
                         tempFile.Newfilename = result;
-                        tempFile.Status = "Duplicate";
+                        tempFile.Status = ex.GetType().Name;
                         FileListPreview.Add(tempFile);
                     }
                 }
                 //folder process
-                int count = 0;
                 foreach (Folder folder in FolderTab.Items)
                 {
                     var tempFolder = folder;
@@ -349,18 +369,12 @@ namespace BatchRename
                         tempFolder.Newfolder = result;
                         tempFolder.Status = "OK";
                     }
-                    catch (Exception exception) //exception when folder name is duplicate
+                    catch (Exception ex)
                     {
-                        isDuplicate = true;
                         tempFolder.Newfolder = result;
-                        tempFolder.Status = "Duplicate Foldername";
+                        tempFolder.Status = ex.GetType().Name;
                         FolderListPreview.Add(tempFolder);
                     }
-                }
-
-                if (isDuplicate == true)
-                {
-                    System.Windows.Forms.MessageBox.Show("Duplicate! Please check again", "Erro Detected in Input", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                 }
 
                 FolderTab.Items.Refresh();
@@ -407,7 +421,7 @@ namespace BatchRename
             if (dlg.ShowDialog() == true)
             {
                 string presetfilename = dlg.FileName;
-                
+
                 using (StreamReader reader = new StreamReader(presetfilename))
                 {
                     string line;
@@ -453,5 +467,42 @@ namespace BatchRename
                 }
             }
         }
+
+        private void FileTabStack_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                foreach (var file in files)
+                {
+                    string filename = System.IO.Path.GetFileName(file);
+
+                    FileTab.Items.Add(new File()
+                    {
+                        Filename = filename,
+                        Path = file
+                    });
+                }
+            }
+        }
+
+        private void FoldertabStack_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] folders = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                foreach (var folder in folders)
+                {
+                    string foldername = System.IO.Path.GetFileName(folder);
+
+                    FolderTab.Items.Add(new Folder()
+                    {
+                        Foldername = foldername,
+                        Path = folder
+                    });
+                }
+            }
+        }
+
     }
 }
