@@ -82,15 +82,18 @@ namespace BatchRename
             ActionListBox.ItemsSource = actions;
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteRuleButton_Click(object sender, RoutedEventArgs e)
         {
             actions.Clear();
             ActionListBox.ItemsSource = actions;
+        }
+
+        private void DeleteDirButton_Click(object sender, RoutedEventArgs e)
+        {
             FileTab.ItemsSource = null;
             FileTab.Items.Clear();
             FolderTab.ItemsSource = null;
             FolderTab.Items.Clear();
-            _isBatched = false;
         }
 
         private void AddFileButtons_Click(object sender, RoutedEventArgs e)
