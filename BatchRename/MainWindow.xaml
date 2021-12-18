@@ -14,7 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="Batch Renamer"
-        Height="450"
+        Height="550"
         Width="1100"
         Loaded="Window_Loaded">
     <Grid>
@@ -22,7 +22,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="85" />
+            <RowDefinition Height="150" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -33,7 +33,7 @@
                 <ToolBar>
                     <StackPanel Orientation="Horizontal">
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                Height="25"
+                                Height="30"
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
@@ -52,7 +52,7 @@
                         </Button>
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
                                 Width="150"
-                                Height="25"
+                                Height="30"
                                 Margin="8,0,10,0"
                                 Background="#FFA886C2"
                                 BorderBrush="#FFA886C2"
@@ -74,7 +74,7 @@
                         </Button>
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
                                 Width="150"
-                                Height="25"
+                                Height="30"
                                 Margin="8,0,10,0"
                                 Background="#FFA886C2"
                                 VerticalAlignment="Center"
@@ -97,7 +97,7 @@
             </ToolBarTray>
             <ToolBarTray>
                 <ToolBar x:Name="MethodBar"
-                         Height="30">
+                         Height="50">
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Method: "
                                HorizontalAlignment="Center"
@@ -105,7 +105,7 @@
                         <ComboBox Style="{StaticResource MaterialDesignFilledComboBox}"
                                   Name="ActionMethodBox"
                                   SelectedIndex="0"
-                                  Width="200">
+                                  Width="200" Height="45">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding MagicWord}"
@@ -114,14 +114,14 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                Margin="10,0,10,0"
-                                Height="25px"
+                                Margin="10,10,10,0"
+                                Height="30"
                                 Name="AddMethodButton"
                                 Click="AddMethodButton_Click">
                             <StackPanel Orientation="Horizontal"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
-                                        Height="25"
+                                        Height="30"
                                         Width="100">
                                 <materialDesign:PackIcon Kind="FilePlus"
                                                          VerticalAlignment="Center"
@@ -134,14 +134,14 @@
                             </StackPanel>
                         </Button>
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                Margin="0,0,10,0"
-                                Height="25px"
+                                Margin="0,10,10,0"
+                                Height="30"
                                 Name="DeleteRuleButton"
                                 Click="DeleteRuleButton_Click">
                             <StackPanel Orientation="Horizontal"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
-                                        Height="25">
+                                        Height="30">
                                 <materialDesign:PackIcon Kind="CollapseAllOutline"
                                                          VerticalAlignment="Center" />
                                 <TextBlock Text="Clear Rule"
@@ -152,14 +152,14 @@
                             </StackPanel>
                         </Button>
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                Margin="0,0,10,0"
-                                Height="25px"
+                                Margin="0,10,10,0"
+                                Height="30"
                                 Name="DeleteDirButton"
                                 Click="DeleteDirButton_Click">
                             <StackPanel Orientation="Horizontal"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
-                                        Height="25">
+                                        Height="30">
                                 <materialDesign:PackIcon Kind="TextBoxMinusOutline"
                                                          VerticalAlignment="Center" />
                                 <TextBlock Text="Clear File/Folder"
@@ -175,13 +175,13 @@
             <ToolBarTray>
                 <ToolBar Name="PresetBar">
                     <StackPanel Orientation="Horizontal"
-                                Height="25">
+                                Height="50">
                         <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
                                 Name="LoadPreset"
                                 Click="LoadPreset_Click"
                                 Margin="0 0 5 0"
                                 Background="#0080CBC4"
-                                Height="25"
+                                Height="30"
                                 BorderBrush="#0080CBC4">
                             <materialDesign:PackIcon Kind="FileDocument"
                                                      Foreground="#FF63CCBE"
@@ -196,7 +196,7 @@
                                 Margin="0 0 5 0"
                                 Background="#0080CBC4"
                                 BorderBrush="#0080CBC4"
-                                Height="25">
+                                Height="30">
                             <materialDesign:PackIcon Kind="ContentSave"
                                                      Foreground="#FF63CCBE"
                                                      HorizontalAlignment="Center"
@@ -207,14 +207,34 @@
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"></Label>
                         <ComboBox Style="{StaticResource MaterialDesignFilledComboBox}"
-                                  Name="presetBox"
-                                  Width="147">
+                                  Name="presetBox" SelectionChanged="presetBox_SelectionChanged"
+                                  Width="147" Height="45" Foreground="White">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                    <TextBlock Text="{Binding}" Foreground="White"></TextBlock>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                        <Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                Margin="10,10,10,0"
+                                Height="30"
+                                Name="AddFileFromFolder"
+                                Click="AddFileFromFolder_Click">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Height="25"
+                                        Width="140">
+                                <materialDesign:PackIcon Kind="FilePlus"
+                                                         VerticalAlignment="Center"
+                                                         Height="20"/>
+                                <TextBlock Text="Add File From Folder"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="12">
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </ToolBar>
             </ToolBarTray>

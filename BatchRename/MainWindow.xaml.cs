@@ -86,6 +86,11 @@ namespace BatchRename
         {
             actions.Clear();
             ActionListBox.ItemsSource = actions;
+            FileTab.ItemsSource = null;
+            FileTab.Items.Clear();
+            FolderTab.ItemsSource = null;
+            FolderTab.Items.Clear();
+            _isBatched = false;
         }
 
         private void DeleteDirButton_Click(object sender, RoutedEventArgs e)
@@ -172,7 +177,27 @@ namespace BatchRename
             ActionListBox.ItemsSource = actions;
         }
 
-        public static void CopyAll(string sourceDirName, string destDirName, bool copySubDirs)
+        private bool DuplicateFile(File file)
+        {
+            foreach(File f in FileTab.Items)
+            {
+                if (f.Filename == file.Filename && f != file)
+                    return true;
+            }
+            return false;
+        }
+
+        private bool DuplicateFolder(Folder folder)
+        {
+            foreach (Folder f in FolderTab.Items)
+            {
+                if (f.Foldername == folder.Foldername && f != folder)
+                    return true;
+            }
+            return false;
+        }
+
+        private void CopyAll(string sourceDirName, string destDirName, bool copySubDirs)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
             if (!dir.Exists)
@@ -203,7 +228,7 @@ namespace BatchRename
             }
         }
 
-        public static void RemoveDirectory(string sourcePath)
+        private void RemoveDirectory(string sourcePath)
         {
             DirectoryInfo src = new DirectoryInfo(sourcePath);
 
@@ -252,7 +277,13 @@ namespace BatchRename
                         var tempfile = new FileInfo(file.Path);
                         tempfile.MoveTo(path + "\\" + result);
                         file.Newfilename = result;
-                        file.Status = "Ok";
+                        if (DuplicateFile(file))
+                        {
+                            file.Status = "Duplicate";
+                            System.Windows.MessageBox.Show("!!!Warning Duplicate File!!!\n Some file in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                            file.Status = "Ok";
                     }
                     catch (Exception ex)
                     {
@@ -286,7 +317,13 @@ namespace BatchRename
                         {
                             Directory.Move(tempFolderPath, newfolderpath);
                             folder.Newfolder = result;
-                            folder.Status = "OK";
+                            if (DuplicateFolder(folder))
+                            {
+                                folder.Status = "Duplicate";
+                                System.Windows.MessageBox.Show("!!!Warning Duplicate Folder!!!\n Some folder in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                            else
+                                folder.Status = "Ok";
                         }
                         catch (Exception ex)
                         {
@@ -336,6 +373,7 @@ namespace BatchRename
             {
                 ObservableCollection<File> FileListPreview = new ObservableCollection<File>();
                 ObservableCollection<Folder> FolderListPreview = new ObservableCollection<Folder>();
+
                 //file process
                 foreach (File file in FileTab.Items)
                 {
@@ -348,7 +386,14 @@ namespace BatchRename
                     try
                     {
                         tempFile.Newfilename = result;
-                        tempFile.Status = "Ok";
+                        if (DuplicateFile(file))
+                        {
+                            tempFile.Status = "Duplicate";
+                            System.Windows.MessageBox.Show("!!!Warning Duplicate File!!!\n Some file in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                            tempFile.Status = "Ok";
+                        
                     }
                     catch (Exception ex)
                     {
@@ -370,7 +415,13 @@ namespace BatchRename
                     try
                     {
                         tempFolder.Newfolder = result;
-                        tempFolder.Status = "OK";
+                        if (DuplicateFolder(folder))
+                        {
+                            tempFolder.Status = "Duplicate";
+                            System.Windows.MessageBox.Show("!!!Warning Duplicate Folder!!!\n Some folder in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                            tempFolder.Status = "Ok";
                     }
                     catch (Exception ex)
                     {
