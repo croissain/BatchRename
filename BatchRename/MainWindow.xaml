@@ -16,6 +16,7 @@
         Title="Batch Renamer"
         Height="550"
         Width="1100"
+        ResizeMode="NoResize"
         Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -248,7 +249,7 @@
             <!--Phần chứa các method được gọi-->
             <ListBox x:Name="ActionListBox"
                      Grid.Column="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                     ScrollViewer.HorizontalScrollBarVisibility="Visible">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
@@ -278,13 +279,13 @@
                                        Foreground="Black" />
                         </StackPanel>
                     </TabItem.Header>
-
                     <Grid>
                         <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
                                 ToolTip="MaterialDesignFloatingLightButton"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Margin="20"
+                                Panel.ZIndex="13"
                                 Click="AddFileButtons_Click">
                             <materialDesign:PackIcon Kind="Plus"
                                                      Height="24"
@@ -294,12 +295,31 @@
                                     Name="FileTabStack"
                                     AllowDrop="True"
                                     Drop="FileTabStack_Drop">
+
                             <DataGrid Name="FileTab"
                                       Background="#FF63CCBE"
                                       GridLinesVisibility="All"
                                       IsReadOnly="True"
                                       Foreground="Black"
-                                      BorderBrush="White">
+                                      BorderBrush="White"
+                                      MaxHeight="350"
+                                      ScrollViewer.CanContentScroll="True"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background"
+                                                Value="#FFDAF3EB" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver"
+                                                     Value="True">
+                                                <Setter Property="Background"
+                                                        Value="#FF63CCBE" />
+                                                <Setter Property="Foreground"
+                                                        Value="White" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="File Name"
                                                         Width="1.5*"
@@ -331,6 +351,7 @@
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Margin="20"
+                                Panel.ZIndex="13"
                                 Click="AddFolderButtons_Click"
                                 Background="#FF9677AE"
                                 BorderBrush="#FF9677AE">
@@ -344,8 +365,27 @@
                             <DataGrid Name="FolderTab"
                                       Background="#FF9677AE"
                                       GridLinesVisibility="All"
+                                      Foreground="Black"
                                       IsReadOnly="True"
-                                      BorderBrush="White">
+                                      BorderBrush="White"
+                                      MaxHeight="350"
+                                      ScrollViewer.CanContentScroll="True"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background"
+                                                Value="#FFE8DBF1" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver"
+                                                     Value="True">
+                                                <Setter Property="Background"
+                                                        Value="#FF9677AE" />
+                                                <Setter Property="Foreground"
+                                                        Value="White" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Folder Name"
                                                         Width="1.5*"
