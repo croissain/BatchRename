@@ -88,12 +88,8 @@ namespace BatchRename
         {
             actions.Clear();
             ActionListBox.ItemsSource = actions;
-            FileTab.ItemsSource = null;
-            FileTab.Items.Clear();
-            FolderTab.ItemsSource = null;
-            FolderTab.Items.Clear();
-            _isBatched = false;
             presetBox.SelectedIndex = -1;
+            _isBatched = false;
         }
 
         private void DeleteDirButton_Click(object sender, RoutedEventArgs e)
@@ -102,6 +98,7 @@ namespace BatchRename
             FileTab.Items.Clear();
             FolderTab.ItemsSource = null;
             FolderTab.Items.Clear();
+            _isBatched = false;
         }
 
         private void AddFileButtons_Click(object sender, RoutedEventArgs e)
@@ -182,7 +179,7 @@ namespace BatchRename
 
         private bool DuplicateFile(File file)
         {
-            foreach(File f in FileTab.Items)
+            foreach (File f in FileTab.Items)
             {
                 if (f.Filename == file.Filename && f != file)
                     return true;
@@ -265,89 +262,108 @@ namespace BatchRename
             {
                 ObservableCollection<File> FileList = new ObservableCollection<File>();
                 ObservableCollection<Folder> FolderList = new ObservableCollection<Folder>();
-                //file process
                 int index = 0;
-                foreach (File file in FileTab.Items)
+                //file process
+                if (FTabControl.SelectedIndex == 0)
                 {
-                    string result = file.Filename;
-                    foreach (var rule in actions)
+                    string directory = "";
+                    if (System.Windows.MessageBox.Show("Do you want create a copy of all the files and move them to a folder?", "Option batch rename", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        result = rule.Rename(result, index);
-                    }
-
-                    var path = Path.GetDirectoryName(file.Path);
-                    try
-                    {
-                        var tempfile = new FileInfo(file.Path);
-                        tempfile.MoveTo(path + "\\" + result);
-                        file.Newfilename = result;
-                        if (DuplicateFile(file))
+                        var screen = new FolderBrowserDialog();
+                        if (screen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            file.Status = "Duplicate";
-                            System.Windows.MessageBox.Show("!!!Warning Duplicate File!!!\n Some file in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            directory = screen.SelectedPath;
                         }
-                        else
-                            file.Status = "Ok";
-                    }
-                    catch (Exception ex)
-                    {
-                        isFailed = true;
-                        file.Newfilename = result;
-                        file.Status = ex.GetType().Name;
-                        FileList.Add(file);
                     }
 
-                    index++;
-                }
-                //folder process
-                int count = 0;
-                foreach (Folder folder in FolderTab.Items)
-                {
-                    string result = folder.Foldername;
-                    foreach (var rule in actions)
+                    foreach (File file in FileTab.Items)
                     {
-                        result = rule.Rename(result, index);
-                        index++;
-                    }
+                        string result = file.Filename;
+                        foreach (var rule in actions)
+                        {
+                            result = rule.Rename(result, index);
+                        }
 
-                    string newfolderpath = Path.GetDirectoryName(folder.Path) + "\\" + result;
-                    string tempFolderName = "\\TempFolderBatchRename";
-                    string tempFolderPath = Path.GetDirectoryName(folder.Path) + tempFolderName;
-
-                    CopyAll(folder.Path, tempFolderPath, true);
-
-                    if (folder.Path.Equals(newfolderpath) == false)
-                    {
-                        RemoveDirectory(folder.Path);
-                        Directory.Delete(folder.Path);
+                        var path = Path.GetDirectoryName(file.Path);
                         try
                         {
-                            Directory.Move(tempFolderPath, newfolderpath);
-                            folder.Newfolder = result;
-                            if (DuplicateFolder(folder))
+                            var tempfile = new FileInfo(file.Path);
+                            if(directory != "") tempfile.CopyTo(directory + "\\" + result);
+                            else tempfile.MoveTo(path + "\\" + result);
+
+                            file.Newfilename = result;
+                            if (DuplicateFile(file))
                             {
-                                folder.Status = "Duplicate";
-                                System.Windows.MessageBox.Show("!!!Warning Duplicate Folder!!!\n Some folder in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                file.Status = "Duplicate";
+                                System.Windows.MessageBox.Show("!!!Warning Duplicate File!!!\n Some file in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                             }
                             else
-                                folder.Status = "Ok";
+                                file.Status = "Ok";
                         }
                         catch (Exception ex)
                         {
                             isFailed = true;
-                            string duplicatestore = Path.GetDirectoryName(folder.Path) + "\\Store" + $"{++count}";
-                            CopyAll(tempFolderPath, duplicatestore, true);
+                            file.Newfilename = result;
+                            file.Status = ex.GetType().Name;
+                            FileList.Add(file);
+                        }
+
+                        index++;
+                    }
+                }
+
+                else
+                {
+                    //folder process
+                    int count = 0;
+                    foreach (Folder folder in FolderTab.Items)
+                    {
+                        string result = folder.Foldername;
+                        foreach (var rule in actions)
+                        {
+                            result = rule.Rename(result, index);
+                            index++;
+                        }
+
+                        string newfolderpath = Path.GetDirectoryName(folder.Path) + "\\" + result;
+                        string tempFolderName = "\\TempFolderBatchRename";
+                        string tempFolderPath = Path.GetDirectoryName(folder.Path) + tempFolderName;
+
+                        CopyAll(folder.Path, tempFolderPath, true);
+
+                        if (folder.Path.Equals(newfolderpath) == false)
+                        {
+                            RemoveDirectory(folder.Path);
+                            Directory.Delete(folder.Path);
+                            try
+                            {
+                                Directory.Move(tempFolderPath, newfolderpath);
+                                folder.Newfolder = result;
+                                if (DuplicateFolder(folder))
+                                {
+                                    folder.Status = "Duplicate";
+                                    System.Windows.MessageBox.Show("!!!Warning Duplicate Folder!!!\n Some folder in list is duplicated, be careful before batching, your changes will be lost.", "Duplicate  Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                }
+                                else
+                                    folder.Status = "Ok";
+                            }
+                            catch (Exception ex)
+                            {
+                                isFailed = true;
+                                string duplicatestore = Path.GetDirectoryName(folder.Path) + "\\Store" + $"{++count}";
+                                CopyAll(tempFolderPath, duplicatestore, true);
+                                RemoveDirectory(tempFolderPath);
+                                Directory.Delete(tempFolderPath);
+                                folder.Newfolder = result;
+                                folder.Status = ex.GetType().Name;
+                                FolderList.Add(folder);
+                            }
+                        }
+                        else
+                        {
                             RemoveDirectory(tempFolderPath);
                             Directory.Delete(tempFolderPath);
-                            folder.Newfolder = result;
-                            folder.Status = ex.GetType().Name;
-                            FolderList.Add(folder);
                         }
-                    }
-                    else
-                    {
-                        RemoveDirectory(tempFolderPath);
-                        Directory.Delete(tempFolderPath);
                     }
                 }
 
@@ -402,7 +418,7 @@ namespace BatchRename
                         }
                         else
                             tempFile.Status = "Ok";
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -412,6 +428,7 @@ namespace BatchRename
                     }
                 }
                 //folder process
+                index = 0;
                 foreach (Folder folder in FolderTab.Items)
                 {
                     var tempFolder = folder;
@@ -515,7 +532,7 @@ namespace BatchRename
 
         private void presetBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if(presetBox.SelectedIndex >= 0)
+            if (presetBox.SelectedIndex >= 0)
             {
                 actions.Clear();
                 string presetName = presetBox.SelectedItem as string;

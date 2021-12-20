@@ -273,7 +273,7 @@
                             </StackPanel.ContextMenu>
                             <!--Giao diện method được chọn-->
                             <Button Content="{Binding MagicWord}"
-                                    Width="295"
+                                    Width="280"
                                     BorderThickness="2"
                                     Foreground="White"
                                     FontWeight="Bold" />
@@ -281,7 +281,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TabControl Grid.Column="1">
+            <TabControl Name="FTabControl" Grid.Column="1">
                 <TabItem Background="{DynamicResource PrimaryHueLightBrush}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
