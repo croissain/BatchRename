@@ -263,12 +263,13 @@ namespace BatchRename
                 ObservableCollection<File> FileList = new ObservableCollection<File>();
                 ObservableCollection<Folder> FolderList = new ObservableCollection<Folder>();
                 //file process
+                int index = 0;
                 foreach (File file in FileTab.Items)
                 {
                     string result = file.Filename;
                     foreach (var rule in actions)
                     {
-                        result = rule.Rename(result);
+                        result = rule.Rename(result, index);
                     }
 
                     var path = Path.GetDirectoryName(file.Path);
@@ -292,6 +293,8 @@ namespace BatchRename
                         file.Status = ex.GetType().Name;
                         FileList.Add(file);
                     }
+
+                    index++;
                 }
                 //folder process
                 int count = 0;
@@ -300,7 +303,8 @@ namespace BatchRename
                     string result = folder.Foldername;
                     foreach (var rule in actions)
                     {
-                        result = rule.Rename(result);
+                        result = rule.Rename(result, index);
+                        index++;
                     }
 
                     string newfolderpath = Path.GetDirectoryName(folder.Path) + "\\" + result;
@@ -375,13 +379,15 @@ namespace BatchRename
                 ObservableCollection<Folder> FolderListPreview = new ObservableCollection<Folder>();
 
                 //file process
+                int index = 0;
                 foreach (File file in FileTab.Items)
                 {
                     var tempFile = file;
                     string result = tempFile.Filename;
                     foreach (var rule in actions)
                     {
-                        result = rule.Rename(result);
+                        result = rule.Rename(result, index);
+                        index++;
                     }
                     try
                     {
@@ -409,7 +415,8 @@ namespace BatchRename
                     string result = tempFolder.Foldername;
                     foreach (var rule in actions)
                     {
-                        result = rule.Rename(result);
+                        result = rule.Rename(result, index);
+                        index++;
                     }
 
                     try
