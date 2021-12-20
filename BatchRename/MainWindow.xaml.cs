@@ -38,6 +38,7 @@ namespace BatchRename
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "//Preset");
             LoadAllPreset();
 
+            //Load all rule from file .dll
             string folder = AppDomain.CurrentDomain.BaseDirectory;
             var fis = new DirectoryInfo(folder).GetFiles("*.dll");
 
@@ -72,6 +73,7 @@ namespace BatchRename
             FileTab.Items.Refresh();
             FolderTab.Items.Refresh();
             listPreset.Clear();
+            presetBox.SelectedIndex = -1;
             LoadAllPreset();
         }
 
@@ -91,6 +93,7 @@ namespace BatchRename
             FolderTab.ItemsSource = null;
             FolderTab.Items.Clear();
             _isBatched = false;
+            presetBox.SelectedIndex = -1;
         }
 
         private void DeleteDirButton_Click(object sender, RoutedEventArgs e)
@@ -512,19 +515,22 @@ namespace BatchRename
 
         private void presetBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            actions.Clear();
-            string presetName = presetBox.SelectedItem as string;
-            string presetFileName = AppDomain.CurrentDomain.BaseDirectory + "//Preset//" + presetName + ".txt";
-            using (StreamReader reader = new StreamReader(presetFileName))
+            if(presetBox.SelectedIndex >= 0)
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                actions.Clear();
+                string presetName = presetBox.SelectedItem as string;
+                string presetFileName = AppDomain.CurrentDomain.BaseDirectory + "//Preset//" + presetName + ".txt";
+                using (StreamReader reader = new StreamReader(presetFileName))
                 {
-                    var firstSpaceIndex = line.IndexOf(" ");
-                    var magicword = line.Substring(0, firstSpaceIndex);
-                    IRenameRuleParser parser = parserPrototypes[magicword];
-                    actions.Add(parser.Parse(line));
-                    ActionListBox.ItemsSource = actions;
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        var firstSpaceIndex = line.IndexOf(" ");
+                        var magicword = line.Substring(0, firstSpaceIndex);
+                        IRenameRuleParser parser = parserPrototypes[magicword];
+                        actions.Add(parser.Parse(line));
+                        ActionListBox.ItemsSource = actions;
+                    }
                 }
             }
         }
@@ -565,5 +571,45 @@ namespace BatchRename
             }
         }
 
+        private void MoveUpMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int index = (ActionListBox.Items.IndexOf(ActionListBox.SelectedItem));
+            if (index > 0)
+            {
+                var temp = actions[index];
+                actions.Insert(index - 1, temp);
+                actions.RemoveAt(index + 1);
+            }
+        }
+        private void MoveDownMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int index = (ActionListBox.Items.IndexOf(ActionListBox.SelectedItem));
+            if (index != (actions.Count - 1) && index >= 0)
+            {
+                var temp = actions[index + 1];
+                actions.Insert(index, temp);
+                actions.RemoveAt(index + 2);
+            }
+        }
+        private void MoveTopMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int index = (ActionListBox.Items.IndexOf(ActionListBox.SelectedItem));
+            if (index > 0)
+            {
+                var temp = actions[index];
+                actions.Insert(0, temp);
+                actions.RemoveAt(index + 1);
+            }
+        }
+        private void MoveBottomMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int index = (ActionListBox.Items.IndexOf(ActionListBox.SelectedItem));
+            if (index != (actions.Count - 1) && index >= 0)
+            {
+                var temp = actions[index];
+                actions.Insert(actions.Count, temp);
+                actions.RemoveAt(index);
+            }
+        }
     }
 }

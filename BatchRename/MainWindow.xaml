@@ -259,6 +259,16 @@
                                               Click="EditMenuItem_Click" />
                                     <MenuItem Header="Remove"
                                               Click="RemoveMenuItem_Click" />
+                                    <Separator />
+
+                                    <MenuItem Header="Move Up"
+                                              Click="MoveUpMenuItem_Click" />
+                                    <MenuItem Header="Move Down"
+                                              Click="MoveDownMenuItem_Click" />
+                                    <MenuItem Header="Move To The Top"
+                                              Click="MoveTopMenuItem_Click" />
+                                    <MenuItem Header="Move To The Bottom"
+                                              Click="MoveBottomMenuItem_Click" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <!--Giao diện method được chọn-->
