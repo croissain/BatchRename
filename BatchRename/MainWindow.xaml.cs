@@ -255,7 +255,7 @@ namespace BatchRename
             }
             else if (_isBatched)
             {
-                System.Windows.Forms.MessageBox.Show("Duplicate Error!\n You must clear all file or folder to rebatch.", "Duplicate Handle", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("Duplicate Error!\n You must refresh to countinue batch.", "Duplicate Handle", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
             }
             else
             {
@@ -266,7 +266,7 @@ namespace BatchRename
                 if (FTabControl.SelectedIndex == 0)
                 {
                     string directory = "";
-                    if (System.Windows.MessageBox.Show("Do you want create a copy of all the files and move them to a folder?", "Option batch rename", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    if (System.Windows.MessageBox.Show("Do you want create a copy of all the files and move them to a folder?", "Option batch rename", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         var screen = new FolderBrowserDialog();
                         if (screen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -281,6 +281,7 @@ namespace BatchRename
                         foreach (var rule in actions)
                         {
                             result = rule.Rename(result, index);
+                            index++;
                         }
 
                         var path = Path.GetDirectoryName(file.Path);
@@ -306,8 +307,6 @@ namespace BatchRename
                             file.Status = ex.GetType().Name;
                             FileList.Add(file);
                         }
-
-                        index++;
                     }
                 }
 
@@ -368,7 +367,7 @@ namespace BatchRename
 
                 if (isFailed == false)
                 {
-                    System.Windows.MessageBox.Show("Rename Success! Check your file or folder again!");
+                    System.Windows.MessageBox.Show("Rename Success! Check your file or folder again!", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     _isBatched = true;
                 }
 
@@ -427,7 +426,6 @@ namespace BatchRename
                     }
                 }
                 //folder process
-                index = 0;
                 foreach (Folder folder in FolderTab.Items)
                 {
                     var tempFolder = folder;
