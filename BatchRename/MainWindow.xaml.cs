@@ -29,7 +29,7 @@ namespace BatchRename
         BindingList<IRenameRule> actions = new BindingList<IRenameRule>(); //Danh sách các quy tắc đổi tên được áp dụng
         BindingList<IRenameRuleParser> parsers = new BindingList<IRenameRuleParser>(); //Các parser sẽ tiến hành parse các string thành các quy tắc đổi tên
         Dictionary<string, IRenameRuleParser> parserPrototypes = new Dictionary<string, IRenameRuleParser>();
-        List<string> listPreset = new List<string>();
+        BindingList<string> listPreset = new BindingList<string>();
         private bool _isBatched = false;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -70,11 +70,12 @@ namespace BatchRename
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            FileTab.Items.Refresh();
-            FolderTab.Items.Refresh();
+            FileTab.Items.Clear();
+            FolderTab.Items.Clear();
             listPreset.Clear();
             presetBox.SelectedIndex = -1;
             LoadAllPreset();
+            _isBatched = false;
         }
 
         private void AddMethodButton_Click(object sender, RoutedEventArgs e)
@@ -89,7 +90,6 @@ namespace BatchRename
             actions.Clear();
             ActionListBox.ItemsSource = actions;
             presetBox.SelectedIndex = -1;
-            _isBatched = false;
         }
 
         private void DeleteDirButton_Click(object sender, RoutedEventArgs e)
@@ -98,7 +98,6 @@ namespace BatchRename
             FileTab.Items.Clear();
             FolderTab.ItemsSource = null;
             FolderTab.Items.Clear();
-            _isBatched = false;
         }
 
         private void AddFileButtons_Click(object sender, RoutedEventArgs e)
@@ -491,6 +490,9 @@ namespace BatchRename
                         }
                     }
                     System.Windows.MessageBox.Show("Save success!");
+                    listPreset.Clear();
+                    LoadAllPreset();
+                    presetBox.ItemsSource = listPreset;
                 }
             }
         }
@@ -499,6 +501,7 @@ namespace BatchRename
         {
             actions.Clear();
             var dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.InitialDirectory = @$"{AppDomain.CurrentDomain.BaseDirectory}Preset";
             if (dlg.ShowDialog() == true)
             {
                 string presetfilename = dlg.FileName;
@@ -520,7 +523,7 @@ namespace BatchRename
 
         private void LoadAllPreset()
         {
-            string pathPreset = AppDomain.CurrentDomain.BaseDirectory + "//Preset";
+            string pathPreset = AppDomain.CurrentDomain.BaseDirectory + "Preset";
             string[] presetFiles = Directory.GetFiles(pathPreset);
             foreach (var filename in presetFiles)
             {
@@ -536,7 +539,7 @@ namespace BatchRename
             {
                 actions.Clear();
                 string presetName = presetBox.SelectedItem as string;
-                string presetFileName = AppDomain.CurrentDomain.BaseDirectory + "//Preset//" + presetName + ".txt";
+                string presetFileName = AppDomain.CurrentDomain.BaseDirectory + "Preset\\" + presetName + ".txt";
                 using (StreamReader reader = new StreamReader(presetFileName))
                 {
                     string line;
