@@ -1,13 +1,11 @@
 # Project 01 - Batch Rename
 
-Thành viên nhóm
-- 19120575: Nguyễn Đức Mạnh
-- 19120671: Lê Nguyễn Nhất Thọ
+Thành viên nhóm:
 
-MSSV | Họ và tên | Nhiệm vụ được giao | Github
----- | --------- | ------------------ | ------
-19120575 | Nguyễn Đức Mạnh |  | [manhnguyen1515](https://github.com/manhnguyen1515)
-19120671 | Lê Nguyễn Nhất Thọ | | [croissain](https://github.com/thole20042001)
+MSSV | Họ và tên | Github
+---- | --------- | ------
+19120575 | Nguyễn Đức Mạnh | [manhnguyen1515](https://github.com/manhnguyen1515)
+19120671 | Lê Nguyễn Nhất Thọ | [croissain](https://github.com/thole20042001)
 
 ## ⛳ Mục tiêu
 Viết ứng dụng đổi tên nhiều tệp/thư mục.
