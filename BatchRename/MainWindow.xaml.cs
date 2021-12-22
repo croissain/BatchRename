@@ -281,9 +281,9 @@ namespace BatchRename
                         foreach (var rule in actions)
                         {
                             result = rule.Rename(result, index);
-                            index++;
+                            
                         }
-
+                        index++;
                         var path = Path.GetDirectoryName(file.Path);
                         try
                         {
@@ -320,9 +320,9 @@ namespace BatchRename
                         foreach (var rule in actions)
                         {
                             result = rule.Rename(result, index);
-                            index++;
+                            
                         }
-
+                        index++;
                         string newfolderpath = Path.GetDirectoryName(folder.Path) + "\\" + result;
                         string tempFolderName = "\\TempFolderBatchRename";
                         string tempFolderPath = Path.GetDirectoryName(folder.Path) + tempFolderName;
@@ -404,8 +404,9 @@ namespace BatchRename
                     foreach (var rule in actions)
                     {
                         result = rule.Rename(result, index);
-                        index++;
+                        
                     }
+                    index++;
                     try
                     {
                         tempFile.Newfilename = result;
@@ -433,9 +434,9 @@ namespace BatchRename
                     foreach (var rule in actions)
                     {
                         result = rule.Rename(result, index);
-                        index++;
+                        
                     }
-
+                    index++;
                     try
                     {
                         tempFolder.Newfolder = result;
