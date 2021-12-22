@@ -29,6 +29,10 @@ Viết ứng dụng đổi tên nhiều tệp/thư mục.
 - Kiến trúc plugin
 - Delegate & event
 
+### Sơ đồ lớp
+![RuleLib](./ClassDiagram/BatchRenameClassDiagram1.drawio.png)
+![RuleParserLib](./ClassDiagram/BatchRenameClassDiagram2.drawio.png)
+
 ### Các luật đổi tên đã hoàn thiện
 - Đổi tên phần mở rộng.
 - Thêm bộ đếm vào sau tên tên tệp/thư mục.
